@@ -1,7 +1,5 @@
 package com.onlyleft.sqleight;
 
-import com.onlyleft.sqleight.extractor.ObjectExtractor;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

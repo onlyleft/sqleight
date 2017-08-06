@@ -1,4 +1,4 @@
-package com.onlyleft.sqleight.extractor;
+package com.onlyleft.sqleight;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
