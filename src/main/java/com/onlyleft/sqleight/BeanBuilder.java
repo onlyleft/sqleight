@@ -21,6 +21,10 @@ public class BeanBuilder<E> {
         FieldExtractor.extract(resultSet, columnName, result, getter, setter);
         return this;
     }
+    public <T> BeanBuilder<E> extract(int position, SqlBiFunction<ResultSet, Integer, T> getter, BiConsumer<E, T> setter) throws SQLException {
+        FieldExtractor.extract(resultSet, position, result, getter, setter);
+        return this;
+    }
 
     public E getResult() {
         return result;

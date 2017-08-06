@@ -8,7 +8,7 @@ public class FieldExtractor<E> {
     public static <E, T> void extract(ResultSet resultSet, String columnName, E bean, SqlBiFunction<ResultSet, String, T> getter, BiConsumer<E, T> setter) throws SQLException {
         setter.accept(bean, getter.apply(resultSet, columnName));
     }
-    public static <E, T> void extract(ResultSet resultSet, Integer position, E bean, SqlBiFunction<ResultSet, Integer, T> getter, BiConsumer<E, T> setter) throws SQLException {
+    public static <E, T> void extract(ResultSet resultSet, int position, E bean, SqlBiFunction<ResultSet, Integer, T> getter, BiConsumer<E, T> setter) throws SQLException {
         setter.accept(bean, getter.apply(resultSet, position));
     }
 
@@ -22,6 +22,11 @@ public class FieldExtractor<E> {
 
     public <T> FieldExtractor<E> extract(String columnName, SqlBiFunction<ResultSet, String, T> getter, BiConsumer<E, T> setter) throws SQLException {
         FieldExtractor.extract(resultSet, columnName, target, getter, setter);
+        return this;
+    }
+
+    public <T> FieldExtractor<E> extract(int position, SqlBiFunction<ResultSet, Integer, T> getter, BiConsumer<E, T> setter) throws SQLException {
+        FieldExtractor.extract(resultSet, position, target, getter, setter);
         return this;
     }
 }
