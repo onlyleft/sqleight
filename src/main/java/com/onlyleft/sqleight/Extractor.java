@@ -4,6 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @FunctionalInterface
-public interface ObjectExtractor<T> {
+public interface Extractor<T> {
     T extract(ResultSet resultSet) throws SQLException;
 }

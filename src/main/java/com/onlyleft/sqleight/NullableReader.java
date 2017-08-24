@@ -3,7 +3,7 @@ package com.onlyleft.sqleight;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class NullableHelper {
+public class NullableReader {
 
     public static Boolean getBoolean(ResultSet resultSet, int position) throws SQLException {
         boolean value = resultSet.getBoolean(position);
