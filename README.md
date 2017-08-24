@@ -20,37 +20,37 @@ to make this pattern easier to use. There is a column position and column name b
 ### `Extractor<T>` functional interface for quickly defining how to read a row into a `T`
 Sample use as a bare lambda
 ```java
-    Extractor<Person> buildPerson = (resultSet) -> {
-        final Person person = new Person();
-        person.setName(resultSet.getString("name"));
-        person.setAge(NullableReader.getInteger(resultSet, "age"));
-        return person;
-    };
+Extractor<Person> buildPerson = (resultSet) -> {
+    final Person person = new Person();
+    person.setName(resultSet.getString("name"));
+    person.setAge(NullableReader.getInteger(resultSet, "age"));
+    return person;
+};
 ```
 Sample use with `ObjectBuilder<T>`
 ```java
-    Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person.class)
-            .extract("name", ResultSet::getString, Person::setName)
-            .extract("age", NullableReader::getInteger, Person::setAge)
-            .getResult();
+Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person.class)
+        .extract("name", ResultSet::getString, Person::setName)
+        .extract("age", NullableReader::getInteger, Person::setAge)
+        .getResult();
 ```
 
 ### Handle SQLException with a SQLExceptionHandler functional interface
 ```java
-    SQLExceptionHandler defaultLoggingHandler = (SQLException e) -> LOGGER.log(Level.SEVERE, "Could not complete query", e);
+SQLExceptionHandler defaultLoggingHandler = (SQLException e) -> LOGGER.log(Level.SEVERE, "Could not complete query", e);
 ```
 
 ### Setup your prepared statements with a functional interface used as a closure
 ```java
-    public Optional<Person> getById(final int id) {
-        return queryForOptional(dataSource,
-                "SELECT name, age FROM people WHERE id = ?",
-                (ps) -> {
-                    ps.setInt(1, id);
-                    return ps;
-                },
-                buildPerson);
-    }
+public Optional<Person> getById(final int id) {
+    return queryForOptional(dataSource,
+            "SELECT name, age FROM people WHERE id = ?",
+            (ps) -> {
+                ps.setInt(1, id);
+                return ps;
+            },
+            buildPerson);
+}
 ```
 
 ### Static include SqlEight.* for quick use to query for an `Optional<T>` or a `List<T>`
