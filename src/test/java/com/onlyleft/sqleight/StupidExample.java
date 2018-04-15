@@ -1,20 +1,17 @@
-import com.onlyleft.sqleight.ObjectBuilder;
-import com.onlyleft.sqleight.NullableReader;
-import com.onlyleft.sqleight.FieldExtractor;
-import com.onlyleft.sqleight.Extractor;
+package com.onlyleft.sqleight;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
+import static com.onlyleft.sqleight.FieldExtractor.extract;
 import static com.onlyleft.sqleight.SqlEight.queryForList;
 import static com.onlyleft.sqleight.SqlEight.queryForOptional;
-import static com.onlyleft.sqleight.FieldExtractor.extract;
 
 public class StupidExample {
 
-    private DataSource dataSource = null;
+    private Connection connection = null;
 
     private Extractor<Person> buildPerson = (resultSet) -> {
         final Person p = new Person();
@@ -63,11 +60,11 @@ public class StupidExample {
             .getResult();
 
     public List<Person> getAll() {
-        return queryForList(dataSource, "Select * from People", buildPerson);
+        return queryForList(connection, "Select * from People", buildPerson);
     }
 
     public Optional<Person> getById(final int id) {
-        return queryForOptional(dataSource,
+        return queryForOptional(connection,
                 "Select * FROM people WHERE id = ?",
                 (ps) -> {
                     ps.setInt(1, id);

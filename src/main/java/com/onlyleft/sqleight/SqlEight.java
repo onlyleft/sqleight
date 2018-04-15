@@ -1,6 +1,5 @@
 package com.onlyleft.sqleight;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,10 +15,9 @@ public class SqlEight {
 
     private static SQLExceptionHandler defaultLoggingHandler = (SQLException e) -> LOGGER.log(Level.SEVERE, "Could not complete query", e);
 
-    public static <T> List<T> queryForList(DataSource ds, String query, Preparer preparer, Extractor<T> function, SQLExceptionHandler seh) {
+    public static <T> List<T> queryForList(Connection connection, String query, Preparer preparer, Extractor<T> function, SQLExceptionHandler seh) {
         List<T> results = new ArrayList<>();
         try (
-                Connection connection = ds.getConnection();
                 PreparedStatement preparedStatement = preparer.prepare(connection.prepareStatement(query));
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
@@ -33,9 +31,8 @@ public class SqlEight {
         return results;
     }
 
-    public static <T> Optional<T> queryForOptional(DataSource ds, String query, Preparer prep, Extractor<T> function, SQLExceptionHandler seh) {
+    public static <T> Optional<T> queryForOptional(Connection connection, String query, Preparer prep, Extractor<T> function, SQLExceptionHandler seh) {
         try (
-                Connection connection = ds.getConnection();
                 PreparedStatement preparedStatement = prep.prepare(connection.prepareStatement(query));
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
@@ -49,28 +46,28 @@ public class SqlEight {
         return Optional.empty();
     }
 
-    public static <T> List<T> queryForList(DataSource ds, String query, Preparer preparer, Extractor<T> function) {
-        return queryForList(ds, query, preparer, function, defaultLoggingHandler);
+    public static <T> List<T> queryForList(Connection connection, String query, Preparer preparer, Extractor<T> function) {
+        return queryForList(connection, query, preparer, function, defaultLoggingHandler);
     }
 
-    public static <T> Optional<T> queryForOptional(DataSource ds, String query, Preparer preparer, Extractor<T> function) {
-        return queryForOptional(ds, query, preparer, function, defaultLoggingHandler);
+    public static <T> Optional<T> queryForOptional(Connection connection, String query, Preparer preparer, Extractor<T> function) {
+        return queryForOptional(connection, query, preparer, function, defaultLoggingHandler);
     }
 
-    public static <T> List<T> queryForList(DataSource ds, String query, Extractor<T> function, SQLExceptionHandler seh) {
-        return queryForList(ds, query, (preparedStatement -> preparedStatement), function, seh);
+    public static <T> List<T> queryForList(Connection connection, String query, Extractor<T> function, SQLExceptionHandler seh) {
+        return queryForList(connection, query, (preparedStatement -> preparedStatement), function, seh);
     }
 
-    public static <T> Optional<T> queryForOptional(DataSource ds, String query, Extractor<T> function, SQLExceptionHandler seh) {
-        return queryForOptional(ds, query, (preparedStatement -> preparedStatement), function, seh);
+    public static <T> Optional<T> queryForOptional(Connection connection, String query, Extractor<T> function, SQLExceptionHandler seh) {
+        return queryForOptional(connection, query, (preparedStatement -> preparedStatement), function, seh);
     }
 
-    public static <T> List<T> queryForList(DataSource ds, String query, Extractor<T> function) {
-        return queryForList(ds, query, (preparedStatement -> preparedStatement), function, defaultLoggingHandler);
+    public static <T> List<T> queryForList(Connection connection, String query, Extractor<T> function) {
+        return queryForList(connection, query, (preparedStatement -> preparedStatement), function, defaultLoggingHandler);
     }
 
-    public static <T> Optional<T> queryForOptional(DataSource ds, String query, Extractor<T> function) {
-        return queryForOptional(ds, query, (preparedStatement -> preparedStatement), function, defaultLoggingHandler);
+    public static <T> Optional<T> queryForOptional(Connection connection, String query, Extractor<T> function) {
+        return queryForOptional(connection, query, (preparedStatement -> preparedStatement), function, defaultLoggingHandler);
     }
 
 
