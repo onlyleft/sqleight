@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.onlyleft.sqleight.DatasourceTestFactory.getConnection;
 import static com.onlyleft.sqleight.DatasourceTestFactory.setupTables;
@@ -36,6 +38,19 @@ public class SqlEightTest {
     public void getAll() {
         List<Person> personList = SqlEight.queryForList(connection, "SELECT name, age FROM Person", buildPerson);
 
+        assertThat(personList.isEmpty(), is(false));
+        assertThat(personList.size(), is(2));
+    }
+
+
+    @Test
+    public void getAllAsStream() {
+        List<Person> personList = null;
+        try (Stream<Person> personStream = SqlEight.queryForStream(connection, "SELECT name, age FROM Person", buildPerson)) {
+            personList = personStream.collect(Collectors.toList());
+        }
+
+        assertThat(personList, not(nullValue()));
         assertThat(personList.isEmpty(), is(false));
         assertThat(personList.size(), is(2));
     }

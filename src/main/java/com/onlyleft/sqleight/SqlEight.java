@@ -4,16 +4,40 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static java.util.Spliterator.ORDERED;
 
 public class SqlEight {
     private static final Logger LOGGER = Logger.getLogger(SqlEight.class.getName());
 
     private static SQLExceptionHandler defaultLoggingHandler = (SQLException e) -> LOGGER.log(Level.SEVERE, "Could not complete query", e);
+
+    public static <T> Stream<T> queryForStream(Connection connection, String query, Preparer preparer, Extractor<T> function, SQLExceptionHandler seh) {
+        try {
+            PreparedStatement preparedStatement = preparer.prepare(connection.prepareStatement(query));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new ResultSetIterator<>(function, resultSet), ORDERED), false)
+                    .onClose(() -> {
+                        try {
+                            preparedStatement.close();
+                            resultSet.close();
+                        }
+                        catch (SQLException e) {
+                            seh.handle(e);
+                        }
+                    });
+        }
+        catch (SQLException e) {
+            seh.handle(e);
+        }
+
+        return Stream.empty();
+    }
 
     public static <T> List<T> queryForList(Connection connection, String query, Preparer preparer, Extractor<T> function, SQLExceptionHandler seh) {
         List<T> results = new ArrayList<>();
@@ -46,6 +70,10 @@ public class SqlEight {
         return Optional.empty();
     }
 
+    public static <T> Stream<T> queryForStream(Connection connection, String query, Preparer preparer, Extractor<T> function) {
+        return queryForStream(connection, query, preparer, function, defaultLoggingHandler);
+    }
+
     public static <T> List<T> queryForList(Connection connection, String query, Preparer preparer, Extractor<T> function) {
         return queryForList(connection, query, preparer, function, defaultLoggingHandler);
     }
@@ -54,12 +82,20 @@ public class SqlEight {
         return queryForOptional(connection, query, preparer, function, defaultLoggingHandler);
     }
 
+    public static <T> Stream<T> queryForStream(Connection connection, String query, Extractor<T> function, SQLExceptionHandler seh) {
+        return queryForStream(connection, query, (preparedStatement -> preparedStatement), function, seh);
+    }
+
     public static <T> List<T> queryForList(Connection connection, String query, Extractor<T> function, SQLExceptionHandler seh) {
         return queryForList(connection, query, (preparedStatement -> preparedStatement), function, seh);
     }
 
     public static <T> Optional<T> queryForOptional(Connection connection, String query, Extractor<T> function, SQLExceptionHandler seh) {
         return queryForOptional(connection, query, (preparedStatement -> preparedStatement), function, seh);
+    }
+
+    public static <T> Stream<T> queryForStream(Connection connection, String query, Extractor<T> function) {
+        return queryForStream(connection, query, (preparedStatement -> preparedStatement), function, defaultLoggingHandler);
     }
 
     public static <T> List<T> queryForList(Connection connection, String query, Extractor<T> function) {
