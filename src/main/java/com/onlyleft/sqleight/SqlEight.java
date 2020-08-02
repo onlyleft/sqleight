@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Spliterators;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -15,7 +18,7 @@ import static java.util.Spliterator.ORDERED;
 public class SqlEight {
     private static final Logger LOGGER = Logger.getLogger(SqlEight.class.getName());
 
-    private static SQLExceptionHandler defaultLoggingHandler = (SQLException e) -> LOGGER.log(Level.SEVERE, "Could not complete query", e);
+    private static final SQLExceptionHandler defaultLoggingHandler = (SQLException e) -> LOGGER.log(Level.SEVERE, "Could not complete query", e);
 
     public static <T> Stream<T> queryForStream(Connection connection, String query, Preparer preparer, Extractor<T> function, SQLExceptionHandler seh) {
         try {

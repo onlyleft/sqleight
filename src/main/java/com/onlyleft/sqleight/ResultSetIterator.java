@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class ResultSetIterator<T> implements Iterator<T>, AutoCloseable {
-    private Extractor<T> extractor;
-    private ResultSet resultSet;
+    private final Extractor<T> extractor;
+    private final ResultSet resultSet;
     private boolean hasNext;
 
     public ResultSetIterator(Extractor<T> extractor, ResultSet resultSet) {

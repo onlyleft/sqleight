@@ -12,8 +12,8 @@ public class FieldExtractor<E> {
         setter.accept(bean, getter.apply(resultSet, position));
     }
 
-    private ResultSet resultSet;
-    private E target;
+    private final ResultSet resultSet;
+    private final E target;
 
     public FieldExtractor(ResultSet resultSet, E target) {
         this.resultSet = resultSet;

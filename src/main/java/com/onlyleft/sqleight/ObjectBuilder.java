@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.function.BiConsumer;
 
 public class ObjectBuilder<E> {
-    private ResultSet resultSet;
-    private E result;
+    private final ResultSet resultSet;
+    private final E result;
 
     public ObjectBuilder(ResultSet resultSet, Class<E> clazz) {
         this.resultSet = resultSet;
