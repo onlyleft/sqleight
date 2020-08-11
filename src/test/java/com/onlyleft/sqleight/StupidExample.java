@@ -54,7 +54,7 @@ public class StupidExample {
         return person;
     };
 
-    private Extractor<Person> buildPerson5 = (resultSet) -> new ObjectBuilder<>(resultSet, Person.class)
+    private Extractor<Person> buildPerson5 = (resultSet) -> new ObjectBuilder<>(resultSet, Person::new)
             .extract("name", ResultSet::getString, Person::setName)
             .extract("age", NullableReader::getInteger, Person::setAge)
             .getResult();

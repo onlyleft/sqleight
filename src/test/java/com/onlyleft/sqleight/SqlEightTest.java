@@ -19,7 +19,7 @@ public class SqlEightTest {
 
     private static Connection connection = getConnection();
 
-    private Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person.class)
+    private Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person::new)
             .extract("name", ResultSet::getString, Person::setName)
             .extract("age", NullableReader::getInteger, Person::setAge)
             .getResult();

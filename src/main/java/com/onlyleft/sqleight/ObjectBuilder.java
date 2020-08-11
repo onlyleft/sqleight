@@ -1,21 +1,17 @@
 package com.onlyleft.sqleight;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class ObjectBuilder<E> {
     private final ResultSet resultSet;
     private final E result;
 
-    public ObjectBuilder(ResultSet resultSet, Class<E> clazz) {
+    public ObjectBuilder(ResultSet resultSet, Supplier<E> constructor) {
         this.resultSet = resultSet;
-        try {
-            this.result = clazz.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Must be able to construct an empty instance", e);
-        }
+        this.result = constructor.get();
     }
 
     public <T> ObjectBuilder<E> extract(String columnName, SqlBiFunction<ResultSet, String, T> getter, BiConsumer<E, T> setter) throws SQLException {
