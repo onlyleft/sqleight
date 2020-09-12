@@ -9,10 +9,16 @@ public class ResultSetIterator<T> implements Iterator<T>, AutoCloseable {
     private final Extractor<T> extractor;
     private final ResultSet resultSet;
     private boolean hasNext;
+    private final SQLExceptionHandler handler;
 
-    public ResultSetIterator(Extractor<T> extractor, ResultSet resultSet) {
+    static <T> ResultSetIterator<T> of(Extractor<T> extractor, ResultSet resultSet, SQLExceptionHandler handler) {
+        return new ResultSetIterator<T>(extractor, resultSet, handler);
+    }
+
+    private ResultSetIterator(Extractor<T> extractor, ResultSet resultSet, SQLExceptionHandler handler) {
         this.extractor = extractor;
         this.resultSet = resultSet;
+        this.handler = handler;
     }
 
     @Override
@@ -21,7 +27,7 @@ public class ResultSetIterator<T> implements Iterator<T>, AutoCloseable {
             try {
                 hasNext = resultSet.next();
             } catch (SQLException e) {
-                throw new RuntimeException("Unable to get next result", e);
+                handler.handle(e);
             }
         }
 
@@ -37,7 +43,7 @@ public class ResultSetIterator<T> implements Iterator<T>, AutoCloseable {
                 return extracted;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Unable to extract result", e);
+            handler.handle(e);
         }
         throw new NoSuchElementException();
     }

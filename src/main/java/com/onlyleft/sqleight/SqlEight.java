@@ -22,7 +22,7 @@ public class SqlEight {
         try {
             PreparedStatement preparedStatement = preparer.prepare(connection.prepareStatement(query));
             ResultSet resultSet = preparedStatement.executeQuery();
-            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new ResultSetIterator<>(function, resultSet), ORDERED), false)
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(ResultSetIterator.of(function, resultSet, seh), ORDERED), false)
                     .onClose(() -> {
                         try {
                             preparedStatement.close();
