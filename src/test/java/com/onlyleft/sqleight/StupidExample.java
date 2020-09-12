@@ -11,16 +11,16 @@ import static com.onlyleft.sqleight.SqlEight.queryForOptional;
 
 public class StupidExample {
 
-    private Connection connection = null;
+    private final Connection connection = null;
 
-    private Extractor<Person> buildPerson = (resultSet) -> {
+    private final Extractor<Person> buildPerson = (resultSet) -> {
         final Person p = new Person();
         p.setName(resultSet.getString("name"));
         p.setAge(resultSet.getInt("age"));
         return p;
     };
 
-    private Extractor<Person> buildPerson1 = (resultSet) -> {
+    private final Extractor<Person> buildPerson1 = (resultSet) -> {
         final Person person = new Person();
         person.setName(resultSet.getString("name"));
         int age = resultSet.getInt("age");
@@ -30,14 +30,14 @@ public class StupidExample {
         return person;
     };
 
-    private Extractor<Person> buildPerson2 = (resultSet) -> {
+    private final Extractor<Person> buildPerson2 = (resultSet) -> {
         final Person person = new Person();
         person.setName(resultSet.getString("name"));
         person.setAge(NullableReader.getInteger(resultSet, "age"));
         return person;
     };
 
-    private Extractor<Person> buildPerson3 = (resultSet) -> {
+    private final Extractor<Person> buildPerson3 = (resultSet) -> {
         final Person person = new Person();
         extract(resultSet, "age", person, NullableReader::getInteger, Person::setAge);
 //        extract(resultSet, "age", person, ResultSet::getInt, Person::setAge);
@@ -46,18 +46,18 @@ public class StupidExample {
         return person;
     };
 
-    private Extractor<Person> buildPerson4 = (resultSet) -> {
+    private final Extractor<Person> buildPerson4 = (resultSet) -> {
         final Person person = new Person();
-        new FieldExtractor<>(resultSet, person)
+        FieldExtractor.of(person, resultSet)
                 .extract("name", ResultSet::getString, Person::setName)
                 .extract("age", NullableReader::getInteger, Person::setAge);
         return person;
     };
 
-    private Extractor<Person> buildPerson5 = (resultSet) -> new ObjectBuilder<>(resultSet, Person::new)
+    private final Extractor<Person> buildPerson5 = (resultSet) -> ObjectBuilder.of(Person::new, resultSet)
             .extract("name", ResultSet::getString, Person::setName)
             .extract("age", NullableReader::getInteger, Person::setAge)
-            .getResult();
+            .get();
 
     public List<Person> getAll() {
         return queryForList(connection, "Select * from People", buildPerson);

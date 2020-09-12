@@ -29,10 +29,10 @@ Extractor<Person> buildPerson = (resultSet) -> {
 ```
 Sample use with `ObjectBuilder<T>`
 ```java
-Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person.class)
+Extractor<Person> buildPerson = (resultSet) -> ObjectBuilder.of(Person.class, resultSet)
         .extract("name", ResultSet::getString, Person::setName)
         .extract("age", NullableReader::getInteger, Person::setAge)
-        .getResult();
+        .get();
 ```
 
 ### Handle SQLException with a SQLExceptionHandler functional interface
@@ -57,10 +57,8 @@ public Optional<Person> getById(final int id) {
 ```java
 import com.onlyleft.sqleight.ObjectBuilder;
 import com.onlyleft.sqleight.NullableReader;
-import com.onlyleft.sqleight.FieldExtractor;
 import com.onlyleft.sqleight.Extractor;
 
-import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
@@ -68,10 +66,10 @@ import java.util.Optional;
 import static com.onlyleft.sqleight.SqlEight.*;
 
 public class StupidExample {
-    private Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person.class)
+    private final Extractor<Person> buildPerson = (resultSet) -> ObjectBuilder.of(Person.class, resultSet)
             .extract("name", ResultSet::getString, Person::setName)
             .extract("age", NullableReader::getInteger, Person::setAge)
-            .getResult();
+            .get();
 
     public List<Person> getAll() {
         return queryForList(dataSource, "SELECT name, age FROM people", buildPerson);

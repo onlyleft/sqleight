@@ -44,7 +44,7 @@ public class ResultSetIterator<T> implements Iterator<T>, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        if (resultSet != null) {
+        if (resultSet != null && !resultSet.isClosed()) {
             resultSet.close();
         }
     }

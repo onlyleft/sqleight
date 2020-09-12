@@ -17,12 +17,12 @@ import static org.junit.Assert.assertThat;
 
 public class SqlEightTest {
 
-    private static Connection connection = getConnection();
+    private static final Connection connection = getConnection();
 
-    private Extractor<Person> buildPerson = (resultSet) -> new ObjectBuilder<>(resultSet, Person::new)
+    private final Extractor<Person> buildPerson = (resultSet) -> ObjectBuilder.of(Person::new, resultSet)
             .extract("name", ResultSet::getString, Person::setName)
             .extract("age", NullableReader::getInteger, Person::setAge)
-            .getResult();
+            .get();
 
     @BeforeClass
     public static void setup() {

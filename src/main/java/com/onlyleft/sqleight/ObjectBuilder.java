@@ -6,10 +6,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ObjectBuilder<E> {
+    public static <E> ObjectBuilder<E> of(Supplier<E> constructor, ResultSet resultSet) {
+        return new ObjectBuilder<>(resultSet, constructor);
+    }
+
     private final ResultSet resultSet;
     private final E result;
 
-    public ObjectBuilder(ResultSet resultSet, Supplier<E> constructor) {
+    private ObjectBuilder(ResultSet resultSet, Supplier<E> constructor) {
         this.resultSet = resultSet;
         this.result = constructor.get();
     }
@@ -23,7 +27,7 @@ public class ObjectBuilder<E> {
         return this;
     }
 
-    public E getResult() {
+    public E get() {
         return result;
     }
 }

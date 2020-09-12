@@ -12,10 +12,14 @@ public class FieldExtractor<E> {
         setter.accept(bean, getter.apply(resultSet, position));
     }
 
+    public static <E> FieldExtractor<E> of(E target, ResultSet resultSet) {
+        return new FieldExtractor<>(resultSet, target);
+    }
+
     private final ResultSet resultSet;
     private final E target;
 
-    public FieldExtractor(ResultSet resultSet, E target) {
+    private FieldExtractor(ResultSet resultSet, E target) {
         this.resultSet = resultSet;
         this.target = target;
     }
